@@ -1,7 +1,12 @@
 window.todos = function () {
     return { 
+        filter: 'all',
+
         todos: [],
+
         newTodo : '',
+
+        editedTodo : null,
 
         get active(){
             return this.todos.filter(todo => ! todo.completed);
@@ -9,6 +14,15 @@ window.todos = function () {
 
         get completed(){
             return this.todos.filter(todo => todo.completed);
+        },
+
+        get filteredTodos(){
+            return {
+                all: this.todos,
+                active: this.active,
+                completed: this.completed
+
+            }[this.filter];
         },
         
         addTodo() {
@@ -19,6 +33,29 @@ window.todos = function () {
             });
 
             this.newTodo = '';
+        },
+
+        editTodo(todo){
+            todo.cachedBody = todo.body;
+
+            this.editedTodo = todo;
+        },
+
+        cancelEdit(todo) {
+            todo.body = todo.cachedBody;
+
+            this.editedTodo = null;
+
+            delete todo.cachedBody;
+        },
+
+        //complete the edit
+        editComplete(todo) {
+            if (todo.body.trim() ==='') {
+                return this.deleteTodo(todo);
+            }
+
+            this.editedTodo = null;
         },
 
         deleteTodo(todo){
